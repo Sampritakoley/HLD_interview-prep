@@ -3,7 +3,7 @@
 > A fully interactive, offline-ready study tracker for cracking System Design rounds at FAANG, MAANG, and top Indian unicorns like Swiggy, Razorpay, Flipkart & more.
 
 ## 🔗 Live Site
-👉 **[HLD Question List](https://sampritakoley.github.io/dsa-interview-prep-2026/)**
+👉 **[HLD Question List](https://sampritakoley.github.io/HLD_interview-prep/)**
 
 ---
 
