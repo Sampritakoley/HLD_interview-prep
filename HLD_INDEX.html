@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HLD Question Bank</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root[data-theme="dark"] {
+    --bg: #0f1117;
+    --bg2: #1a1d27;
+    --bg3: #222535;
+    --border: #2e3147;
+    --text: #e2e4ef;
+    --text2: #8b90a8;
+    --text3: #5a5f7a;
+    --accent: #6c63ff;
+    --accent-light: rgba(108,99,255,0.12);
+    --green: #22c55e;
+    --green-light: rgba(34,197,94,0.1);
+    --orange: #f97316;
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --card-done-bg: rgba(34,197,94,0.05);
+    --card-done-border: #22c55e;
+    --scrollbar: #2e3147;
+  }
+  :root[data-theme="light"] {
+    --bg: #f0f2f8;
+    --bg2: #ffffff;
+    --bg3: #e8eaf2;
+    --border: #d1d5e8;
+    --text: #1a1d27;
+    --text2: #4a4f6a;
+    --text3: #8b90a8;
+    --accent: #6c63ff;
+    --accent-light: rgba(108,99,255,0.1);
+    --green: #16a34a;
+    --green-light: rgba(22,163,74,0.1);
+    --orange: #ea6c00;
+    --red: #dc2626;
+    --blue: #2563eb;
+    --card-done-bg: rgba(22,163,74,0.06);
+    --card-done-border: #16a34a;
+    --scrollbar: #d1d5e8;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 3px; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  /* HEADER */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .header-title h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .header-title p {
+    font-size: 0.72rem;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .stat-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text2);
+    white-space: nowrap;
+  }
+  .pill span {
+    color: var(--text);
+  }
+  .pill.accent span { color: var(--accent); }
+  .pill.green span { color: var(--green); }
+
+  .theme-btn {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--text2);
+    transition: all 0.2s;
+  }
+  .theme-btn:hover { border-color: var(--accent); color: var(--text); }
+
+  .progress-wrap {
+    margin-top: 10px;
+    background: var(--bg3);
+    border-radius: 4px;
+    height: 4px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--green));
+    border-radius: 4px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* FILTERS */
+  .filters {
+    position: sticky;
+    top: 83px;
+    z-index: 90;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  .search-box {
+    flex: 1;
+    min-width: 180px;
+    max-width: 260px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 0.82rem;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border 0.2s;
+  }
+  .search-box::placeholder { color: var(--text3); }
+  .search-box:focus { border-color: var(--accent); }
+
+  select {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 0.8rem;
+    color: var(--text2);
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    cursor: pointer;
+    transition: border 0.2s;
+  }
+  select:focus { border-color: var(--accent); color: var(--text); }
+
+  .toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: var(--text2);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .toggle-label input { accent-color: var(--accent); cursor: pointer; }
+
+  .filter-badge {
+    background: var(--accent);
+    color: #fff;
+    border-radius: 10px;
+    padding: 2px 7px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: none;
+  }
+  .filter-badge.visible { display: inline-block; }
+
+  .clear-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.78rem;
+    color: var(--text3);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .clear-btn:hover { border-color: var(--red); color: var(--red); }
+
+  .reset-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.78rem;
+    color: var(--text3);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+    margin-left: auto;
+  }
+  .reset-btn:hover { border-color: var(--orange); color: var(--orange); }
+
+  /* MAIN */
+  .main {
+    padding: 20px 24px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .count-bar {
+    font-size: 0.78rem;
+    color: var(--text3);
+    margin-bottom: 16px;
+  }
+  .count-bar strong { color: var(--text2); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid transparent;
+    border-radius: 12px;
+    padding: 16px;
+    transition: all 0.2s ease;
+    position: relative;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeIn 0.3s ease forwards;
+    cursor: default;
+    outline: none;
+  }
+  .card:focus { border-color: var(--accent) !important; box-shadow: 0 0 0 2px var(--accent-light); }
+  .card:hover { border-color: var(--border); box-shadow: 0 2px 12px rgba(0,0,0,0.15); }
+  .card.done {
+    background: var(--card-done-bg);
+    border-left-color: var(--card-done-border) !important;
+  }
+  .card.done .card-title { text-decoration: line-through; opacity: 0.6; }
+
+  @keyframes fadeIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .check-icon {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 22px;
+    height: 22px;
+    background: var(--green);
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    color: #fff;
+    font-weight: 700;
+  }
+  .card.done .check-icon { display: flex; }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .card-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+    min-width: 0;
+    line-height: 1.3;
+    padding-right: 28px;
+  }
+
+  .badge {
+    display: inline-block;
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .badge-cat { background: var(--accent-light); color: var(--accent); }
+  .badge-easy { background: rgba(34,197,94,0.15); color: var(--green); }
+  .badge-medium-d { background: rgba(249,115,22,0.15); color: var(--orange); }
+  .badge-hard { background: rgba(239,68,68,0.15); color: var(--red); }
+  .badge-vh { background: rgba(239,68,68,0.15); color: var(--red); }
+  .badge-h { background: rgba(249,115,22,0.15); color: var(--orange); }
+  .badge-m { background: rgba(59,130,246,0.15); color: var(--blue); }
+  .badge-l { background: rgba(139,144,168,0.15); color: var(--text3); }
+
+  .meta-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+
+  .companies-row {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+    align-items: center;
+  }
+  .co-pill {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-size: 0.65rem;
+    color: var(--text2);
+    font-weight: 500;
+  }
+  .co-more {
+    font-size: 0.65rem;
+    color: var(--text3);
+  }
+
+  .tags-row {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .tag-chip {
+    background: var(--bg3);
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-size: 0.65rem;
+    color: var(--text3);
+  }
+
+  .done-btn {
+    width: 100%;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    color: var(--text2);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .done-btn:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
+  .card.done .done-btn {
+    background: var(--green-light);
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text3);
+    display: none;
+  }
+  .empty-state .emoji { font-size: 3rem; margin-bottom: 12px; }
+  .empty-state p { font-size: 0.9rem; }
+  .empty-state.visible { display: block; }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 0.72rem;
+    color: var(--text3);
+    border-top: 1px solid var(--border);
+  }
+  footer kbd {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 0.7rem;
+    font-family: monospace;
+    color: var(--text2);
+  }
+
+  @media (max-width: 768px) {
+    .header { padding: 12px 16px; }
+    .filters { padding: 10px 16px; top: 80px; }
+    .main { padding: 14px 16px 40px; }
+    .grid { grid-template-columns: 1fr; }
+    .search-box { max-width: 100%; }
+    .stat-pills { gap: 5px; }
+    .pill { padding: 3px 9px; font-size: 0.68rem; }
+  }
+
+  /* Cat colors */
+  .cat-social { background: rgba(168,85,247,0.12); color: #a855f7; }
+  .cat-messaging { background: rgba(6,182,212,0.12); color: #06b6d4; }
+  .cat-video { background: rgba(239,68,68,0.12); color: #ef4444; }
+  .cat-storage { background: rgba(249,115,22,0.12); color: #f97316; }
+  .cat-search { background: rgba(234,179,8,0.12); color: #ca8a04; }
+  .cat-ecommerce { background: rgba(34,197,94,0.12); color: #22c55e; }
+  .cat-ride { background: rgba(59,130,246,0.12); color: #3b82f6; }
+  .cat-caching { background: rgba(236,72,153,0.12); color: #ec4899; }
+  .cat-notif { background: rgba(20,184,166,0.12); color: #14b8a6; }
+  .cat-gaming { background: rgba(139,92,246,0.12); color: #8b5cf6; }
+  .cat-adtech { background: rgba(245,158,11,0.12); color: #d97706; }
+  .cat-auth { background: rgba(99,102,241,0.12); color: #6366f1; }
+  .cat-db { background: rgba(16,185,129,0.12); color: #10b981; }
+  .cat-india { background: rgba(244,63,94,0.12); color: #f43f5e; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-top">
+    <div class="header-title">
+      <h1>HLD Question Bank</h1>
+      <p>Interview prep tracker — FAANG + MAANG + Indian Unicorns</p>
+    </div>
+    <div class="header-right">
+      <div class="stat-pills">
+        <div class="pill">Total <span id="s-total">200</span></div>
+        <div class="pill green">Done <span id="s-done">0</span></div>
+        <div class="pill">Left <span id="s-left">200</span></div>
+        <div class="pill accent">% <span id="s-pct">0</span></div>
+      </div>
+      <button class="theme-btn" id="themeBtn" title="Toggle theme">🌙</button>
+    </div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+</header>
+
+<div class="filters">
+  <input class="search-box" type="text" id="searchBox" placeholder="🔍 Search problems or tags…">
+  <select id="catFilter">
+    <option value="">All Categories</option>
+    <option>Social Media &amp; Feeds</option>
+    <option>Messaging &amp; Chat</option>
+    <option>Video &amp; Streaming</option>
+    <option>Storage &amp; File Systems</option>
+    <option>Search &amp; Recommendations</option>
+    <option>E-commerce &amp; Payments</option>
+    <option>Ride-sharing &amp; Maps &amp; Location</option>
+    <option>Caching &amp; Rate Limiting &amp; API</option>
+    <option>Notifications &amp; Messaging Infra</option>
+    <option>Gaming &amp; Real-time Systems</option>
+    <option>Ad Tech &amp; Analytics</option>
+    <option>Auth &amp; Security</option>
+    <option>Databases &amp; Distributed Systems</option>
+    <option>India-specific</option>
+  </select>
+  <select id="diffFilter">
+    <option value="">All Difficulty</option>
+    <option>Easy</option>
+    <option>Medium</option>
+    <option>Hard</option>
+  </select>
+  <select id="freqFilter">
+    <option value="">All Frequency</option>
+    <option>Very High</option>
+    <option>High</option>
+    <option>Medium</option>
+    <option>Low</option>
+  </select>
+  <select id="compFilter">
+    <option value="">All Companies</option>
+    <option>Google</option><option>Meta</option><option>Amazon</option>
+    <option>Apple</option><option>Netflix</option><option>Microsoft</option>
+    <option>Uber</option><option>LinkedIn</option><option>Twitter/X</option>
+    <option>Airbnb</option><option>Stripe</option><option>Shopify</option>
+    <option>Flipkart</option><option>Swiggy</option><option>Zomato</option>
+    <option>Razorpay</option><option>PhonePe</option><option>CRED</option>
+    <option>Ola</option><option>Meesho</option><option>Atlassian</option>
+    <option>Slack</option><option>Spotify</option><option>Pinterest</option>
+    <option>Snapchat</option><option>ByteDance</option><option>Grab</option>
+    <option>Paytm</option><option>Dream11</option><option>Zepto</option>
+  </select>
+  <select id="sortFilter">
+    <option value="freq">Sort: Frequency</option>
+    <option value="diff">Sort: Difficulty</option>
+    <option value="co">Sort: Company Count</option>
+    <option value="alpha">Sort: A–Z</option>
+    <option value="status">Sort: Completion</option>
+  </select>
+  <label class="toggle-label">
+    <input type="checkbox" id="incompleteOnly"> Incomplete only
+  </label>
+  <span class="filter-badge" id="filterBadge">0</span>
+  <button class="clear-btn" id="clearFilters">Clear filters</button>
+  <button class="reset-btn" id="resetBtn">Reset progress</button>
+</div>
+
+<div class="main">
+  <div class="count-bar" id="countBar">Showing <strong id="shownCount">200</strong> of 200 questions</div>
+  <div class="grid" id="grid">
+    <div class="empty-state" id="emptyState">
+      <div class="emoji">🔭</div>
+      <p>No questions match your filters.<br>Try adjusting or clearing them.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <kbd>D</kbd> on focused card to toggle done &nbsp;·&nbsp; <kbd>Tab</kbd> to navigate cards
+</footer>
+
+<script>
+const QUESTIONS = [
+  // --- Social Media & Feeds (18) ---
+  {id:1,problem:"Design Instagram / Photo Sharing Platform",companies:["Meta","Google","Snapchat","Pinterest"],frequency:"Very High",category:"Social Media & Feeds",difficulty:"Hard",tags:["CDN","Object Storage","Feed Ranking","Graph DB"],done:false},
+  {id:2,problem:"Design Twitter/X News Feed",companies:["Twitter/X","Meta","LinkedIn"],frequency:"Very High",category:"Social Media & Feeds",difficulty:"Hard",tags:["Fan-out on Write","Fan-out on Read","Timeline","Cassandra"],done:false},
+  {id:3,problem:"Design Facebook News Feed",companies:["Meta","LinkedIn","Twitter/X"],frequency:"Very High",category:"Social Media & Feeds",difficulty:"Hard",tags:["Feed Ranking","Graph DB","Cache","CDN"],done:false},
+  {id:4,problem:"Design a Like/Reaction System",companies:["Meta","Twitter/X","LinkedIn"],frequency:"High",category:"Social Media & Feeds",difficulty:"Medium",tags:["Counter","Idempotency","Redis","Sharding"],done:false},
+  {id:5,problem:"Design a Follower/Following System",companies:["Twitter/X","Instagram","LinkedIn"],frequency:"High",category:"Social Media & Feeds",difficulty:"Medium",tags:["Graph","Sharding","Cache","Consistent Hashing"],done:false},
+  {id:6,problem:"Design Pinterest's Image Feed",companies:["Pinterest","Meta","Google"],frequency:"High",category:"Social Media & Feeds",difficulty:"Hard",tags:["CDN","Image Resizing","Feed","Object Storage"],done:false},
+  {id:7,problem:"Design LinkedIn Feed & Connections",companies:["LinkedIn","Microsoft","Meta"],frequency:"High",category:"Social Media & Feeds",difficulty:"Hard",tags:["Graph","Feed","Notification","Recommendation"],done:false},
+  {id:8,problem:"Design Snapchat Stories",companies:["Snapchat","Meta","ByteDance"],frequency:"Medium",category:"Social Media & Feeds",difficulty:"Medium",tags:["TTL","Object Storage","CDN","Real-time"],done:false},
+  {id:9,problem:"Design a Trending Topics System",companies:["Twitter/X","Google","Meta"],frequency:"High",category:"Social Media & Feeds",difficulty:"Medium",tags:["Streaming","Top-K","Count-Min Sketch","Kafka"],done:false},
+  {id:10,problem:"Design a Social Graph (Who knows whom)",companies:["Meta","LinkedIn","Twitter/X"],frequency:"Medium",category:"Social Media & Feeds",difficulty:"Hard",tags:["Graph DB","BFS","Neo4j","Partitioning"],done:false},
+  {id:11,problem:"Design a Comments System",companies:["Meta","Google","Reddit"],frequency:"Medium",category:"Social Media & Feeds",difficulty:"Medium",tags:["Threaded Comments","SQL","Pagination","Cache"],done:false},
+  {id:12,problem:"Design Reddit / Community Feed",companies:["Meta","Google","Atlassian"],frequency:"High",category:"Social Media & Feeds",difficulty:"Hard",tags:["Voting","Ranking","Feed","Sharding"],done:false},
+  {id:13,problem:"Design a User Profile Page",companies:["LinkedIn","Meta","Twitter/X"],frequency:"Medium",category:"Social Media & Feeds",difficulty:"Easy",tags:["CDN","Cache","SQL","Object Storage"],done:false},
+  {id:14,problem:"Design TikTok's Short Video Feed",companies:["ByteDance","Meta","Snapchat"],frequency:"Very High",category:"Social Media & Feeds",difficulty:"Hard",tags:["Video Encoding","Feed Ranking","CDN","Recommendation"],done:false},
+  {id:15,problem:"Design a Hashtag / Tag System",companies:["Twitter/X","Instagram","Meta"],frequency:"Medium",category:"Social Media & Feeds",difficulty:"Medium",tags:["Inverted Index","Search","Trending","Cache"],done:false},
+  {id:16,problem:"Design a User Activity Feed",companies:["LinkedIn","Meta","Airbnb"],frequency:"Medium",category:"Social Media & Feeds",difficulty:"Medium",tags:["Event Sourcing","Kafka","Fan-out","Timeline"],done:false},
+  {id:17,problem:"Design a Social Media Bookmarking Feature",companies:["Twitter/X","Pinterest","LinkedIn"],frequency:"Low",category:"Social Media & Feeds",difficulty:"Easy",tags:["SQL","Cache","Collections","Object Storage"],done:false},
+  {id:18,problem:"Design a Repost / Retweet System",companies:["Twitter/X","Meta","LinkedIn"],frequency:"Medium",category:"Social Media & Feeds",difficulty:"Medium",tags:["Fan-out","Cache","Idempotency","Timeline"],done:false},
+
+  // --- Messaging & Chat (15) ---
+  {id:19,problem:"Design WhatsApp / Messaging App",companies:["Meta","Apple","Google","Microsoft"],frequency:"Very High",category:"Messaging & Chat",difficulty:"Hard",tags:["WebSocket","End-to-End Encryption","Message Queue","Delivery Receipts"],done:false},
+  {id:20,problem:"Design Slack / Team Chat",companies:["Slack","Microsoft","Google","Atlassian"],frequency:"Very High",category:"Messaging & Chat",difficulty:"Hard",tags:["WebSocket","Channels","Search","Notification"],done:false},
+  {id:21,problem:"Design a Group Chat System",companies:["Meta","Slack","Microsoft"],frequency:"High",category:"Messaging & Chat",difficulty:"Hard",tags:["Fan-out","WebSocket","Message Storage","Presence"],done:false},
+  {id:22,problem:"Design Online / Presence Status",companies:["Meta","Slack","Microsoft","LinkedIn"],frequency:"High",category:"Messaging & Chat",difficulty:"Medium",tags:["Heartbeat","Redis","Pub/Sub","WebSocket"],done:false},
+  {id:23,problem:"Design a Read Receipt System",companies:["Meta","Apple","Slack"],frequency:"Medium",category:"Messaging & Chat",difficulty:"Medium",tags:["Message State","ACK","DB","Notification"],done:false},
+  {id:24,problem:"Design a Chat Message Search",companies:["Slack","Google","Microsoft"],frequency:"Medium",category:"Messaging & Chat",difficulty:"Medium",tags:["Inverted Index","Elasticsearch","Pagination","Sharding"],done:false},
+  {id:25,problem:"Design iMessage / SMS Gateway",companies:["Apple","Google","Amazon"],frequency:"Medium",category:"Messaging & Chat",difficulty:"Hard",tags:["SMS Gateway","Queue","Retry","Delivery"],done:false},
+  {id:26,problem:"Design a Typing Indicator",companies:["Meta","Slack","Microsoft"],frequency:"Medium",category:"Messaging & Chat",difficulty:"Easy",tags:["WebSocket","Pub/Sub","TTL","Event"],done:false},
+  {id:27,problem:"Design Facebook Messenger",companies:["Meta","Google","Microsoft"],frequency:"Very High",category:"Messaging & Chat",difficulty:"Hard",tags:["Message Storage","Fan-out","WebSocket","Encryption"],done:false},
+  {id:28,problem:"Design a Message Queue System (like Kafka)",companies:["LinkedIn","Amazon","Google","Microsoft"],frequency:"High",category:"Messaging & Chat",difficulty:"Hard",tags:["Log","Partition","Consumer Group","Offset"],done:false},
+  {id:29,problem:"Design a Bot / Chatbot Platform",companies:["Slack","Microsoft","Meta"],frequency:"Medium",category:"Messaging & Chat",difficulty:"Medium",tags:["Webhook","NLP","State Machine","API"],done:false},
+  {id:30,problem:"Design End-to-End Encrypted Chat",companies:["Apple","Meta","Signal"],frequency:"Medium",category:"Messaging & Chat",difficulty:"Hard",tags:["E2EE","Signal Protocol","Key Exchange","Encryption"],done:false},
+  {id:31,problem:"Design a Voice/Video Calling System",companies:["Meta","Google","Microsoft","Zoom"],frequency:"High",category:"Messaging & Chat",difficulty:"Hard",tags:["WebRTC","STUN/TURN","SFU","Media Server"],done:false},
+  {id:32,problem:"Design Message Delivery at Scale",companies:["Meta","Amazon","Google"],frequency:"High",category:"Messaging & Chat",difficulty:"Hard",tags:["Fan-out","Push","Pull","Queue"],done:false},
+  {id:33,problem:"Design a Chat Notification Badge Count",companies:["Slack","Meta","Apple"],frequency:"Low",category:"Messaging & Chat",difficulty:"Easy",tags:["Counter","Cache","Redis","Pub/Sub"],done:false},
+
+  // --- Video & Streaming (15) ---
+  {id:34,problem:"Design YouTube",companies:["Google","Meta","Amazon","Netflix"],frequency:"Very High",category:"Video & Streaming",difficulty:"Hard",tags:["CDN","Video Encoding","Object Storage","Recommendation"],done:false},
+  {id:35,problem:"Design Netflix",companies:["Netflix","Amazon","Google","Apple"],frequency:"Very High",category:"Video & Streaming",difficulty:"Hard",tags:["CDN","Adaptive Bitrate","DRM","Recommendation"],done:false},
+  {id:36,problem:"Design a Live Streaming Platform (Twitch)",companies:["Amazon","Meta","Google","ByteDance"],frequency:"High",category:"Video & Streaming",difficulty:"Hard",tags:["RTMP","HLS","CDN","Latency","Chat"],done:false},
+  {id:37,problem:"Design a Video Upload & Processing Pipeline",companies:["Google","Meta","Amazon"],frequency:"High",category:"Video & Streaming",difficulty:"Hard",tags:["Transcoding","Object Storage","Queue","CDN","FFmpeg"],done:false},
+  {id:38,problem:"Design Adaptive Bitrate Streaming",companies:["Netflix","Google","Amazon"],frequency:"Medium",category:"Video & Streaming",difficulty:"Hard",tags:["HLS","DASH","CDN","Bandwidth","ABR"],done:false},
+  {id:39,problem:"Design a Video Recommendation Engine",companies:["Google","Netflix","ByteDance","Meta"],frequency:"High",category:"Video & Streaming",difficulty:"Hard",tags:["Collaborative Filtering","Embeddings","Matrix Factorization","A/B Testing"],done:false},
+  {id:40,problem:"Design Spotify (Music Streaming)",companies:["Spotify","Apple","Amazon","Google"],frequency:"High",category:"Video & Streaming",difficulty:"Hard",tags:["CDN","Object Storage","Recommendation","Offline Mode"],done:false},
+  {id:41,problem:"Design a Video Comments & Timestamp Annotations System",companies:["Google","Meta","Twitch"],frequency:"Low",category:"Video & Streaming",difficulty:"Medium",tags:["SQL","Cache","Fan-out","Timestamp"],done:false},
+  {id:42,problem:"Design Video Subtitles / Captioning System",companies:["Google","Netflix","Amazon"],frequency:"Low",category:"Video & Streaming",difficulty:"Medium",tags:["SRT","Pipeline","Object Storage","CDN"],done:false},
+  {id:43,problem:"Design an Audio Podcast Platform",companies:["Spotify","Apple","Google"],frequency:"Medium",category:"Video & Streaming",difficulty:"Medium",tags:["CDN","RSS","Object Storage","Recommendation"],done:false},
+  {id:44,problem:"Design a Sports Live Score Streaming System",companies:["Amazon","Google","Grab","Dream11"],frequency:"Medium",category:"Video & Streaming",difficulty:"Medium",tags:["WebSocket","Pub/Sub","Real-time","Push Notification"],done:false},
+  {id:45,problem:"Design Video Thumbnail Generation",companies:["Google","Meta","Netflix"],frequency:"Low",category:"Video & Streaming",difficulty:"Easy",tags:["FFmpeg","Object Storage","CDN","Async Queue"],done:false},
+  {id:46,problem:"Design a Short Video Platform (Reels/Shorts)",companies:["Meta","ByteDance","Google","Snapchat"],frequency:"Very High",category:"Video & Streaming",difficulty:"Hard",tags:["Feed Ranking","CDN","Video Encoding","Recommendation"],done:false},
+  {id:47,problem:"Design a Media CDN",companies:["Netflix","Amazon","Cloudflare","Google"],frequency:"High",category:"Video & Streaming",difficulty:"Hard",tags:["Edge Cache","PoP","DNS","BGP","Anycast"],done:false},
+  {id:48,problem:"Design Video Playback Analytics (Watch Time, Drop-off)",companies:["Google","Netflix","Meta"],frequency:"Medium",category:"Video & Streaming",difficulty:"Medium",tags:["Event Stream","Kafka","ClickHouse","Dashboard"],done:false},
+
+  // --- Storage & File Systems (12) ---
+  {id:49,problem:"Design Google Drive / Dropbox",companies:["Google","Amazon","Microsoft","Apple"],frequency:"Very High",category:"Storage & File Systems",difficulty:"Hard",tags:["Object Storage","Chunking","Versioning","Sync","CDN"],done:false},
+  {id:50,problem:"Design Amazon S3 (Object Storage)",companies:["Amazon","Google","Microsoft"],frequency:"Very High",category:"Storage & File Systems",difficulty:"Hard",tags:["Sharding","Replication","Consistency","Metadata","Erasure Coding"],done:false},
+  {id:51,problem:"Design a Distributed File System (HDFS/GFS)",companies:["Google","Amazon","Meta","Microsoft"],frequency:"High",category:"Storage & File Systems",difficulty:"Hard",tags:["Master-Slave","Block Storage","Replication","Fault Tolerance"],done:false},
+  {id:52,problem:"Design File Sharing with Permissions",companies:["Google","Dropbox","Microsoft","Atlassian"],frequency:"Medium",category:"Storage & File Systems",difficulty:"Medium",tags:["ACL","OAuth","Presigned URL","Audit Log"],done:false},
+  {id:53,problem:"Design a File Upload System (Chunked / Resumable)",companies:["Google","Amazon","Meta","Dropbox"],frequency:"High",category:"Storage & File Systems",difficulty:"Medium",tags:["Multipart Upload","Chunking","Checksum","S3"],done:false},
+  {id:54,problem:"Design a Collaborative Document Editor (Google Docs)",companies:["Google","Microsoft","Atlassian","Notion"],frequency:"High",category:"Storage & File Systems",difficulty:"Hard",tags:["CRDT","OT","WebSocket","Version Control","Conflict Resolution"],done:false},
+  {id:55,problem:"Design a Versioned File System",companies:["Google","Dropbox","GitHub","Atlassian"],frequency:"Medium",category:"Storage & File Systems",difficulty:"Hard",tags:["Immutable Snapshots","Diff","DAG","Object Storage"],done:false},
+  {id:56,problem:"Design a Distributed Blob Store",companies:["Amazon","Meta","Microsoft","Google"],frequency:"Medium",category:"Storage & File Systems",difficulty:"Hard",tags:["Replication","Erasure Coding","Metadata","Sharding"],done:false},
+  {id:57,problem:"Design a Photo Storage System (like iCloud Photos)",companies:["Apple","Google","Amazon","Meta"],frequency:"Medium",category:"Storage & File Systems",difficulty:"Medium",tags:["Deduplication","CDN","Object Storage","Sync"],done:false},
+  {id:58,problem:"Design a Backup System",companies:["Amazon","Google","Microsoft","Dropbox"],frequency:"Medium",category:"Storage & File Systems",difficulty:"Medium",tags:["Incremental Backup","Compression","Deduplication","Replication"],done:false},
+  {id:59,problem:"Design a Content Deduplication System",companies:["Dropbox","Amazon","Google"],frequency:"Low",category:"Storage & File Systems",difficulty:"Medium",tags:["SHA","Chunking","Bloom Filter","Content Addressable Storage"],done:false},
+  {id:60,problem:"Design a Distributed Log System",companies:["LinkedIn","Amazon","Google","Meta"],frequency:"High",category:"Storage & File Systems",difficulty:"Hard",tags:["Append-only Log","Replication","Kafka","Log Compaction"],done:false},
+
+  // --- Search & Recommendations (14) ---
+  {id:61,problem:"Design Google Search / Web Search Engine",companies:["Google","Microsoft","Amazon"],frequency:"Very High",category:"Search & Recommendations",difficulty:"Hard",tags:["Web Crawler","Inverted Index","PageRank","Ranking","Sharding"],done:false},
+  {id:62,problem:"Design a Type-ahead / Autocomplete System",companies:["Google","LinkedIn","Twitter/X","Amazon"],frequency:"Very High",category:"Search & Recommendations",difficulty:"Medium",tags:["Trie","Top-K","Cache","Sharding"],done:false},
+  {id:63,problem:"Design an Elasticsearch-like Search System",companies:["Atlassian","LinkedIn","Amazon","Meta"],frequency:"High",category:"Search & Recommendations",difficulty:"Hard",tags:["Inverted Index","Lucene","Sharding","Replication","Ranking"],done:false},
+  {id:64,problem:"Design a Product Search (like Amazon Search)",companies:["Amazon","Flipkart","Shopify","Meesho"],frequency:"High",category:"Search & Recommendations",difficulty:"Hard",tags:["Inverted Index","Facets","Ranking","Personalization","Cache"],done:false},
+  {id:65,problem:"Design a Recommendation Engine",companies:["Netflix","Amazon","Spotify","Google","ByteDance"],frequency:"Very High",category:"Search & Recommendations",difficulty:"Hard",tags:["Collaborative Filtering","Content-based","Embeddings","A/B Testing"],done:false},
+  {id:66,problem:"Design a Web Crawler",companies:["Google","Amazon","Microsoft"],frequency:"High",category:"Search & Recommendations",difficulty:"Hard",tags:["BFS","Politeness","Robots.txt","Deduplication","DNS"],done:false},
+  {id:67,problem:"Design a Job Search Platform (like LinkedIn Jobs)",companies:["LinkedIn","Google","Indeed","Microsoft"],frequency:"Medium",category:"Search & Recommendations",difficulty:"Medium",tags:["Full Text Search","Facets","Ranking","Personalization"],done:false},
+  {id:68,problem:"Design a People-You-May-Know Feature",companies:["LinkedIn","Meta","Twitter/X"],frequency:"Medium",category:"Search & Recommendations",difficulty:"Medium",tags:["Graph","BFS","Collaborative Filtering","Batch Jobs"],done:false},
+  {id:69,problem:"Design a Real-time Search Suggestions",companies:["Google","Amazon","LinkedIn","Flipkart"],frequency:"Medium",category:"Search & Recommendations",difficulty:"Medium",tags:["Cache","Trie","CDN","Personalization"],done:false},
+  {id:70,problem:"Design Spotify Music Recommendations",companies:["Spotify","Apple","Amazon"],frequency:"Medium",category:"Search & Recommendations",difficulty:"Hard",tags:["Embeddings","Collaborative Filtering","Audio Features","A/B Testing"],done:false},
+  {id:71,problem:"Design a Related Articles System",companies:["Medium","Google","Meta","Twitter/X"],frequency:"Low",category:"Search & Recommendations",difficulty:"Medium",tags:["TF-IDF","Embeddings","Cosine Similarity","Cache"],done:false},
+  {id:72,problem:"Design a Trending Search / Hot Queries System",companies:["Google","Twitter/X","Amazon"],frequency:"Medium",category:"Search & Recommendations",difficulty:"Medium",tags:["Top-K","Count-Min Sketch","Streaming","Window"],done:false},
+  {id:73,problem:"Design Semantic Search System",companies:["Google","Microsoft","Amazon","OpenAI"],frequency:"High",category:"Search & Recommendations",difficulty:"Hard",tags:["Embeddings","Vector DB","ANN","FAISS","Transformers"],done:false},
+  {id:74,problem:"Design a Content-based Filtering System",companies:["Netflix","Spotify","Pinterest","Amazon"],frequency:"Medium",category:"Search & Recommendations",difficulty:"Medium",tags:["TF-IDF","Cosine Similarity","Feature Extraction","Cache"],done:false},
+
+  // --- E-commerce & Payments (16) ---
+  {id:75,problem:"Design Amazon E-commerce Platform",companies:["Amazon","Flipkart","Shopify","Meesho"],frequency:"Very High",category:"E-commerce & Payments",difficulty:"Hard",tags:["Product Catalog","Cart","Order Management","Inventory","Search"],done:false},
+  {id:76,problem:"Design a Flash Sale / Limited Inventory System",companies:["Amazon","Flipkart","Meesho","Shopify"],frequency:"Very High",category:"E-commerce & Payments",difficulty:"Hard",tags:["Distributed Lock","Redis","Rate Limiting","Inventory","Queue"],done:false},
+  {id:77,problem:"Design Stripe / Payment Gateway",companies:["Stripe","PayPal","Razorpay","Amazon"],frequency:"Very High",category:"E-commerce & Payments",difficulty:"Hard",tags:["Idempotency","Transaction","Webhook","Fraud Detection","PCI-DSS"],done:false},
+  {id:78,problem:"Design a Shopping Cart System",companies:["Amazon","Flipkart","Shopify","Google"],frequency:"High",category:"E-commerce & Payments",difficulty:"Medium",tags:["Session","Redis","SQL","Conflict Resolution","Persistence"],done:false},
+  {id:79,problem:"Design an Order Management System",companies:["Amazon","Uber","Swiggy","Flipkart"],frequency:"High",category:"E-commerce & Payments",difficulty:"Hard",tags:["State Machine","Event Sourcing","Saga Pattern","Queue"],done:false},
+  {id:80,problem:"Design a Product Catalog System",companies:["Amazon","Flipkart","Shopify","Meesho"],frequency:"High",category:"E-commerce & Payments",difficulty:"Medium",tags:["Search","Cache","CDN","Versioning","Hierarchy"],done:false},
+  {id:81,problem:"Design an Inventory Management System",companies:["Amazon","Flipkart","Walmart","Shopify"],frequency:"High",category:"E-commerce & Payments",difficulty:"Hard",tags:["Distributed Lock","Consistency","CRDT","Warehouse","Queue"],done:false},
+  {id:82,problem:"Design a Coupon / Discount System",companies:["Amazon","Flipkart","Swiggy","CRED"],frequency:"Medium",category:"E-commerce & Payments",difficulty:"Medium",tags:["Idempotency","Redis","Rules Engine","Validation"],done:false},
+  {id:83,problem:"Design a Recommendation System for E-commerce",companies:["Amazon","Flipkart","Shopify","Netflix"],frequency:"Very High",category:"E-commerce & Payments",difficulty:"Hard",tags:["Collaborative Filtering","Embeddings","Real-time","Personalization"],done:false},
+  {id:84,problem:"Design a Review & Rating System",companies:["Amazon","Airbnb","Google","Flipkart"],frequency:"Medium",category:"E-commerce & Payments",difficulty:"Medium",tags:["Aggregation","Fraud Detection","SQL","Pagination"],done:false},
+  {id:85,problem:"Design a Wishlist / Saved Items Feature",companies:["Amazon","Pinterest","Flipkart","Meesho"],frequency:"Low",category:"E-commerce & Payments",difficulty:"Easy",tags:["SQL","Cache","Collections","Notification"],done:false},
+  {id:86,problem:"Design a Price Tracking / Alert System",companies:["Amazon","Flipkart","Google"],frequency:"Low",category:"E-commerce & Payments",difficulty:"Medium",tags:["Event","Notification","Time Series","Cache"],done:false},
+  {id:87,problem:"Design a Fraud Detection System",companies:["Stripe","PayPal","Razorpay","Amazon","PhonePe"],frequency:"High",category:"E-commerce & Payments",difficulty:"Hard",tags:["ML","Rules Engine","Anomaly Detection","Graph","Real-time"],done:false},
+  {id:88,problem:"Design a Subscription Billing System",companies:["Stripe","Netflix","Spotify","Apple"],frequency:"High",category:"E-commerce & Payments",difficulty:"Hard",tags:["Recurring Payments","Idempotency","Webhook","Dunning","Invoice"],done:false},
+  {id:89,problem:"Design a Digital Wallet",companies:["PayPal","Paytm","PhonePe","Razorpay","Apple"],frequency:"High",category:"E-commerce & Payments",difficulty:"Hard",tags:["Double Entry Ledger","Idempotency","Transaction","Balance"],done:false},
+  {id:90,problem:"Design a Return & Refund System",companies:["Amazon","Flipkart","Shopify","Meesho"],frequency:"Medium",category:"E-commerce & Payments",difficulty:"Medium",tags:["State Machine","Saga","Idempotency","Webhook"],done:false},
+
+  // --- Ride-sharing & Maps & Location (14) ---
+  {id:91,problem:"Design Uber / Lyft Ride Sharing",companies:["Uber","Lyft","Ola","Grab"],frequency:"Very High",category:"Ride-sharing & Maps & Location",difficulty:"Hard",tags:["Geo-sharding","Matching","ETA","Real-time Location","Pricing"],done:false},
+  {id:92,problem:"Design Google Maps",companies:["Google","Apple","Amazon","Uber"],frequency:"Very High",category:"Ride-sharing & Maps & Location",difficulty:"Hard",tags:["Graph","Dijkstra","Geohash","Tile","CDN","Real-time Traffic"],done:false},
+  {id:93,problem:"Design a Nearby Location Service",companies:["Yelp","Google","Uber","Airbnb"],frequency:"Very High",category:"Ride-sharing & Maps & Location",difficulty:"Medium",tags:["Geohash","Quadtree","S2","Redis","Sharding"],done:false},
+  {id:94,problem:"Design Uber Driver / Vehicle Location Tracking",companies:["Uber","Grab","Ola","Lyft"],frequency:"High",category:"Ride-sharing & Maps & Location",difficulty:"Hard",tags:["Real-time","WebSocket","Kafka","Geohash","Write-heavy"],done:false},
+  {id:95,problem:"Design a Surge Pricing System",companies:["Uber","Lyft","Ola","Grab"],frequency:"Medium",category:"Ride-sharing & Maps & Location",difficulty:"Hard",tags:["Demand-Supply","Geo","Real-time","Rules Engine"],done:false},
+  {id:96,problem:"Design a Ride Matching Algorithm",companies:["Uber","Lyft","Ola","Grab"],frequency:"High",category:"Ride-sharing & Maps & Location",difficulty:"Hard",tags:["Geospatial","Matching","ETA","Optimization","Graph"],done:false},
+  {id:97,problem:"Design a Food Delivery ETA System",companies:["Swiggy","Zomato","Uber","DoorDash"],frequency:"High",category:"Ride-sharing & Maps & Location",difficulty:"Hard",tags:["Graph","ML","Real-time","Traffic","GPS"],done:false},
+  {id:98,problem:"Design Location-based Event Notification",companies:["Google","Yelp","Uber","Foursquare"],frequency:"Medium",category:"Ride-sharing & Maps & Location",difficulty:"Medium",tags:["Geofence","Pub/Sub","Push Notification","Geohash"],done:false},
+  {id:99,problem:"Design a Geofencing System",companies:["Uber","Google","Amazon","Foursquare"],frequency:"Medium",category:"Ride-sharing & Maps & Location",difficulty:"Medium",tags:["Geohash","Polygon","Real-time","Event"],done:false},
+  {id:100,problem:"Design a Ride History & Trip Summary Service",companies:["Uber","Ola","Grab","Lyft"],frequency:"Low",category:"Ride-sharing & Maps & Location",difficulty:"Easy",tags:["SQL","S3","Timeline","Pagination"],done:false},
+  {id:101,problem:"Design an ETA Prediction Service",companies:["Google","Uber","Amazon","Swiggy"],frequency:"High",category:"Ride-sharing & Maps & Location",difficulty:"Hard",tags:["ML","Real-time Traffic","Graph","Cache"],done:false},
+  {id:102,problem:"Design Airbnb's Location Search",companies:["Airbnb","Booking.com","Google","Vrbo"],frequency:"High",category:"Ride-sharing & Maps & Location",difficulty:"Hard",tags:["Geospatial","Facets","Availability","Ranking","Cache"],done:false},
+  {id:103,problem:"Design a Store / Restaurant Locator",companies:["McDonald's","Google","Swiggy","Zomato","Yelp"],frequency:"Medium",category:"Ride-sharing & Maps & Location",difficulty:"Medium",tags:["Geohash","S2","Cache","Radius Search"],done:false},
+  {id:104,problem:"Design a Real-time Fleet Management System",companies:["Uber","Amazon","FedEx","Ola"],frequency:"Medium",category:"Ride-sharing & Maps & Location",difficulty:"Hard",tags:["Real-time","Kafka","Geospatial","Dashboard","IoT"],done:false},
+
+  // --- Caching & Rate Limiting & API (12) ---
+  {id:105,problem:"Design a Distributed Cache (like Redis/Memcached)",companies:["Amazon","Google","Meta","Microsoft"],frequency:"Very High",category:"Caching & Rate Limiting & API",difficulty:"Hard",tags:["Consistent Hashing","Eviction","TTL","Sharding","Replication"],done:false},
+  {id:106,problem:"Design a Rate Limiter",companies:["Stripe","Cloudflare","Amazon","Google","LinkedIn"],frequency:"Very High",category:"Caching & Rate Limiting & API",difficulty:"Medium",tags:["Token Bucket","Leaky Bucket","Sliding Window","Redis","Distributed"],done:false},
+  {id:107,problem:"Design an API Gateway",companies:["Amazon","Netflix","Google","Stripe"],frequency:"High",category:"Caching & Rate Limiting & API",difficulty:"Hard",tags:["Rate Limiting","Auth","Load Balancing","Circuit Breaker","SSL Termination"],done:false},
+  {id:108,problem:"Design a CDN (Content Delivery Network)",companies:["Cloudflare","Amazon","Netflix","Google","Akamai"],frequency:"High",category:"Caching & Rate Limiting & API",difficulty:"Hard",tags:["Edge Cache","PoP","Anycast","Cache Invalidation","BGP"],done:false},
+  {id:109,problem:"Design a URL Shortener (like bit.ly)",companies:["Google","Amazon","Meta","Twitter/X"],frequency:"Very High",category:"Caching & Rate Limiting & API",difficulty:"Medium",tags:["Hashing","Base62","Cache","Redirect","Analytics"],done:false},
+  {id:110,problem:"Design a Distributed ID Generator (like Snowflake)",companies:["Twitter/X","Meta","Amazon","LinkedIn"],frequency:"High",category:"Caching & Rate Limiting & API",difficulty:"Medium",tags:["Snowflake","Epoch","Machine ID","Monotonically Increasing"],done:false},
+  {id:111,problem:"Design a Circuit Breaker",companies:["Netflix","Amazon","Microsoft","Uber"],frequency:"Medium",category:"Caching & Rate Limiting & API",difficulty:"Medium",tags:["Hystrix","State Machine","Fallback","Threshold","Half-open"],done:false},
+  {id:112,problem:"Design an HTTP Cache / Reverse Proxy (like Nginx)",companies:["Cloudflare","Amazon","Google","Netflix"],frequency:"Medium",category:"Caching & Rate Limiting & API",difficulty:"Medium",tags:["Cache-Control","ETags","Nginx","Varnish","TTL"],done:false},
+  {id:113,problem:"Design a Feature Flag System",companies:["LinkedIn","LaunchDarkly","Meta","Atlassian"],frequency:"Medium",category:"Caching & Rate Limiting & API",difficulty:"Medium",tags:["A/B Testing","Rollout","Config","Cache","SDK"],done:false},
+  {id:114,problem:"Design a Webhook Delivery System",companies:["Stripe","Shopify","GitHub","Twilio"],frequency:"Medium",category:"Caching & Rate Limiting & API",difficulty:"Medium",tags:["Retry","Idempotency","Queue","Signature","Delivery"],done:false},
+  {id:115,problem:"Design a Service Mesh / Service Discovery",companies:["Netflix","Uber","Google","Amazon","Lyft"],frequency:"Medium",category:"Caching & Rate Limiting & API",difficulty:"Hard",tags:["Consul","Eureka","Sidecar","Load Balancing","Health Check"],done:false},
+  {id:116,problem:"Design a Distributed Configuration Management",companies:["Netflix","Google","Amazon","Microsoft"],frequency:"Low",category:"Caching & Rate Limiting & API",difficulty:"Medium",tags:["etcd","ZooKeeper","Consistency","Watch","Version"],done:false},
+
+  // --- Notifications & Messaging Infra (10) ---
+  {id:117,problem:"Design a Push Notification System",companies:["Apple","Google","Meta","Amazon","Slack"],frequency:"Very High",category:"Notifications & Messaging Infra",difficulty:"Hard",tags:["APNs","FCM","Fan-out","Queue","Device Token"],done:false},
+  {id:118,problem:"Design an Email Delivery System",companies:["SendGrid","Amazon","Mailchimp","Google"],frequency:"High",category:"Notifications & Messaging Infra",difficulty:"Medium",tags:["SMTP","Queue","Retry","Bounce","Unsubscribe","SPF/DKIM"],done:false},
+  {id:119,problem:"Design an SMS Notification Service",companies:["Twilio","Amazon","Google","Razorpay"],frequency:"Medium",category:"Notifications & Messaging Infra",difficulty:"Medium",tags:["Gateway","Queue","Retry","Delivery Receipt","Rate Limit"],done:false},
+  {id:120,problem:"Design a Notification Preference Center",companies:["LinkedIn","Slack","Meta","Amazon"],frequency:"Medium",category:"Notifications & Messaging Infra",difficulty:"Medium",tags:["User Preference","Channel","Opt-out","Cache","SQL"],done:false},
+  {id:121,problem:"Design a Real-time Event Streaming System (Kafka)",companies:["LinkedIn","Uber","Airbnb","Meta","Amazon"],frequency:"High",category:"Notifications & Messaging Infra",difficulty:"Hard",tags:["Partition","Consumer Group","Offset","At-least-once","Log"],done:false},
+  {id:122,problem:"Design a Notification Batching & Digesting System",companies:["LinkedIn","Slack","Meta","GitHub"],frequency:"Medium",category:"Notifications & Messaging Infra",difficulty:"Medium",tags:["Batching","Digest","Schedule","Queue","Deduplication"],done:false},
+  {id:123,problem:"Design In-app Notifications (Bell icon)",companies:["LinkedIn","Meta","Amazon","Slack"],frequency:"Medium",category:"Notifications & Messaging Infra",difficulty:"Medium",tags:["Pub/Sub","Polling","WebSocket","Badge Count","Cache"],done:false},
+  {id:124,problem:"Design a Dead Letter Queue System",companies:["Amazon","Google","Microsoft","Stripe"],frequency:"Low",category:"Notifications & Messaging Infra",difficulty:"Medium",tags:["SQS","Retry","DLQ","Poison Message","Alert"],done:false},
+  {id:125,problem:"Design a Multi-channel Notification Router",companies:["Twilio","Amazon","SendGrid","Braze"],frequency:"Medium",category:"Notifications & Messaging Infra",difficulty:"Medium",tags:["Router","Email","SMS","Push","Fallback","Priority"],done:false},
+  {id:126,problem:"Design Event-driven Architecture",companies:["Amazon","Netflix","Uber","LinkedIn","Airbnb"],frequency:"High",category:"Notifications & Messaging Infra",difficulty:"Hard",tags:["Event Sourcing","CQRS","Kafka","Idempotency","Saga"],done:false},
+
+  // --- Gaming & Real-time Systems (10) ---
+  {id:127,problem:"Design an Online Multiplayer Game Server",companies:["Amazon","Google","Microsoft","Epic"],frequency:"High",category:"Gaming & Real-time Systems",difficulty:"Hard",tags:["UDP","WebSocket","Game Loop","State Sync","Latency"],done:false},
+  {id:128,problem:"Design a Real-time Leaderboard",companies:["Dream11","Google","Meta","Amazon"],frequency:"Very High",category:"Gaming & Real-time Systems",difficulty:"Medium",tags:["Redis Sorted Set","Sharding","Top-K","Cache","Rank"],done:false},
+  {id:129,problem:"Design a Fantasy Sports Platform (like Dream11)",companies:["Dream11","Yahoo","ESPN","Amazon"],frequency:"High",category:"Gaming & Real-time Systems",difficulty:"Hard",tags:["Contest","Team Selection","Real-time Score","Payment","Leaderboard"],done:false},
+  {id:130,problem:"Design a Real-time Collaborative Whiteboard",companies:["Figma","Google","Microsoft","Miro"],frequency:"High",category:"Gaming & Real-time Systems",difficulty:"Hard",tags:["CRDT","OT","WebSocket","Canvas","Conflict Resolution"],done:false},
+  {id:131,problem:"Design a Live Sports Score System",companies:["Dream11","ESPN","Amazon","Google"],frequency:"High",category:"Gaming & Real-time Systems",difficulty:"Medium",tags:["WebSocket","Pub/Sub","Push","Real-time","Low Latency"],done:false},
+  {id:132,problem:"Design a Matchmaking System for Games",companies:["Amazon","Microsoft","Epic","Riot"],frequency:"Medium",category:"Gaming & Real-time Systems",difficulty:"Hard",tags:["Skill Rating","ELO","Queue","Latency","Region"],done:false},
+  {id:133,problem:"Design a Real-time Bidding System",companies:["Google","Meta","Amazon","AppNexus"],frequency:"High",category:"Gaming & Real-time Systems",difficulty:"Hard",tags:["Low Latency","Auction","Budget","RTB","DSP/SSP"],done:false},
+  {id:134,problem:"Design a Stock Trading Platform",companies:["Robinhood","Goldman Sachs","Zerodha","Amazon"],frequency:"High",category:"Gaming & Real-time Systems",difficulty:"Hard",tags:["Order Book","Matching Engine","Low Latency","Consistency","Websocket"],done:false},
+  {id:135,problem:"Design a Live Poll / Voting System",companies:["Twitter/X","Slido","Google","Zoom"],frequency:"Low",category:"Gaming & Real-time Systems",difficulty:"Medium",tags:["Idempotency","Counter","Pub/Sub","Real-time","WebSocket"],done:false},
+  {id:136,problem:"Design a Real-time Collaborative Code Editor",companies:["Replit","GitHub","Google","Microsoft"],frequency:"Medium",category:"Gaming & Real-time Systems",difficulty:"Hard",tags:["OT","CRDT","WebSocket","Execution Sandbox","Presence"],done:false},
+
+  // --- Ad Tech & Analytics (12) ---
+  {id:137,problem:"Design Google AdSense / Display Ads System",companies:["Google","Meta","Amazon","Twitter/X"],frequency:"Very High",category:"Ad Tech & Analytics",difficulty:"Hard",tags:["RTB","Targeting","Budget","Click Tracking","CTR","Fraud"],done:false},
+  {id:138,problem:"Design a Click-Through Rate (CTR) Prediction System",companies:["Google","Meta","Amazon","LinkedIn"],frequency:"High",category:"Ad Tech & Analytics",difficulty:"Hard",tags:["ML","Feature Store","Embeddings","A/B Testing","Real-time Scoring"],done:false},
+  {id:139,problem:"Design a Web Analytics System (like Google Analytics)",companies:["Google","Meta","Adobe","Amazon"],frequency:"High",category:"Ad Tech & Analytics",difficulty:"Hard",tags:["Event Ingestion","ClickHouse","Kafka","Dashboard","Funnel"],done:false},
+  {id:140,problem:"Design a Real-time Ad Bidding System (RTB)",companies:["Google","Meta","Amazon","AppNexus"],frequency:"High",category:"Ad Tech & Analytics",difficulty:"Hard",tags:["DSP","SSP","OpenRTB","Low Latency","Budget Pacing"],done:false},
+  {id:141,problem:"Design a User Attribution System",companies:["Meta","Google","AppsFlyer","Adjust"],frequency:"Medium",category:"Ad Tech & Analytics",difficulty:"Hard",tags:["Last Touch","Multi-touch","Attribution Window","Fingerprint","SKAdNetwork"],done:false},
+  {id:142,problem:"Design an A/B Testing Platform",companies:["Meta","LinkedIn","Airbnb","Netflix","Uber"],frequency:"High",category:"Ad Tech & Analytics",difficulty:"Hard",tags:["Experimentation","Statistical Significance","Feature Flag","Segmentation"],done:false},
+  {id:143,problem:"Design a Funnel Analytics System",companies:["Meta","Google","Amplitude","Mixpanel","LinkedIn"],frequency:"Medium",category:"Ad Tech & Analytics",difficulty:"Medium",tags:["Event","ClickHouse","Funnel Query","Session","Cohort"],done:false},
+  {id:144,problem:"Design a Data Warehouse (like BigQuery)",companies:["Google","Amazon","Meta","Snowflake"],frequency:"High",category:"Ad Tech & Analytics",difficulty:"Hard",tags:["Columnar Storage","MPP","SQL","Partitioning","Compression"],done:false},
+  {id:145,problem:"Design an Impression Tracking System",companies:["Google","Meta","Amazon","Twitter/X"],frequency:"Medium",category:"Ad Tech & Analytics",difficulty:"Medium",tags:["HyperLogLog","Kafka","Count","Deduplication","Cache"],done:false},
+  {id:146,problem:"Design a Budget Pacing System for Ads",companies:["Google","Meta","Amazon","LinkedIn"],frequency:"Medium",category:"Ad Tech & Analytics",difficulty:"Hard",tags:["Throttle","Distributed Counter","Real-time","Budget Allocation"],done:false},
+  {id:147,problem:"Design a Metrics / Monitoring Platform (like Datadog)",companies:["Datadog","Amazon","Google","Netflix","Uber"],frequency:"High",category:"Ad Tech & Analytics",difficulty:"Hard",tags:["Time Series DB","Alerting","Aggregation","Sampling","Dashboard"],done:false},
+  {id:148,problem:"Design a Cohort Analysis System",companies:["Meta","LinkedIn","Airbnb","Amplitude"],frequency:"Low",category:"Ad Tech & Analytics",difficulty:"Medium",tags:["Segmentation","Retention","Event","ClickHouse","SQL"],done:false},
+
+  // --- Auth & Security (10) ---
+  {id:149,problem:"Design an OAuth 2.0 / SSO System",companies:["Google","Microsoft","Okta","Amazon","Meta"],frequency:"Very High",category:"Auth & Security",difficulty:"Hard",tags:["OAuth","JWT","Token","PKCE","Authorization Code Flow"],done:false},
+  {id:150,problem:"Design a JWT Authentication System",companies:["Amazon","Google","Stripe","LinkedIn","Okta"],frequency:"High",category:"Auth & Security",difficulty:"Medium",tags:["JWT","Refresh Token","Blacklisting","Expiry","Signing Key"],done:false},
+  {id:151,problem:"Design a Password Manager (like 1Password)",companies:["Apple","Google","1Password","LastPass"],frequency:"Medium",category:"Auth & Security",difficulty:"Hard",tags:["E2EE","Key Derivation","Vault","Zero-knowledge","Sync"],done:false},
+  {id:152,problem:"Design a Two-Factor Authentication (2FA) System",companies:["Google","Amazon","Okta","Stripe","Apple"],frequency:"High",category:"Auth & Security",difficulty:"Medium",tags:["TOTP","SMS OTP","WebAuthn","HMAC","Time-based"],done:false},
+  {id:153,problem:"Design an API Key Management System",companies:["Stripe","Twilio","AWS","GitHub","Razorpay"],frequency:"Medium",category:"Auth & Security",difficulty:"Medium",tags:["Key Generation","Hashing","Rate Limiting","Scope","Rotation"],done:false},
+  {id:154,problem:"Design a Role-based Access Control (RBAC) System",companies:["Google","Amazon","Microsoft","Okta","Atlassian"],frequency:"High",category:"Auth & Security",difficulty:"Medium",tags:["Roles","Permissions","Policy","Hierarchy","Cache"],done:false},
+  {id:155,problem:"Design a Session Management System",companies:["Google","Amazon","Meta","Stripe"],frequency:"Medium",category:"Auth & Security",difficulty:"Medium",tags:["Session Token","Redis","Cookie","Sliding Expiry","Logout"],done:false},
+  {id:156,problem:"Design a Security Audit Logging System",companies:["Amazon","Google","Microsoft","Stripe","Okta"],frequency:"Medium",category:"Auth & Security",difficulty:"Medium",tags:["Append-only","Immutable","SIEM","Event","Compliance"],done:false},
+  {id:157,problem:"Design a Secrets Management System (like AWS Secrets Manager)",companies:["Amazon","HashiCorp","Google","Microsoft"],frequency:"Medium",category:"Auth & Security",difficulty:"Hard",tags:["Vault","Encryption","Rotation","Access Control","Audit"],done:false},
+  {id:158,problem:"Design a Captcha / Bot Detection System",companies:["Google","Cloudflare","Amazon","Meta"],frequency:"Medium",category:"Auth & Security",difficulty:"Medium",tags:["CAPTCHA","reCAPTCHA","Behavioral Analysis","Fingerprint","ML"],done:false},
+
+  // --- Databases & Distributed Systems (12) ---
+  {id:159,problem:"Design a Distributed Key-Value Store (like DynamoDB)",companies:["Amazon","Google","Meta","Microsoft"],frequency:"Very High",category:"Databases & Distributed Systems",difficulty:"Hard",tags:["Consistent Hashing","Replication","Quorum","LSM Tree","Eventual Consistency"],done:false},
+  {id:160,problem:"Design a Distributed Database (like Cassandra)",companies:["Meta","Apple","Netflix","LinkedIn"],frequency:"High",category:"Databases & Distributed Systems",difficulty:"Hard",tags:["Ring","Gossip","Tunable Consistency","Compaction","Wide Column"],done:false},
+  {id:161,problem:"Design a Time Series Database (like InfluxDB)",companies:["Amazon","Google","Datadog","Grafana"],frequency:"Medium",category:"Databases & Distributed Systems",difficulty:"Hard",tags:["LSM","Compression","Retention","Downsampling","Columnar"],done:false},
+  {id:162,problem:"Design a Distributed Transaction System (2PC / Saga)",companies:["Amazon","Google","Meta","Stripe"],frequency:"High",category:"Databases & Distributed Systems",difficulty:"Hard",tags:["2PC","Saga","Idempotency","ACID","Compensating Transaction"],done:false},
+  {id:163,problem:"Design a Leader Election System (Raft / Paxos)",companies:["Google","Amazon","Meta","Microsoft"],frequency:"Medium",category:"Databases & Distributed Systems",difficulty:"Hard",tags:["Raft","Paxos","Consensus","Leader Election","ZooKeeper"],done:false},
+  {id:164,problem:"Design a Database Sharding Strategy",companies:["Meta","Google","Amazon","Shopify"],frequency:"High",category:"Databases & Distributed Systems",difficulty:"Hard",tags:["Horizontal Sharding","Consistent Hashing","Cross-shard Join","Rebalancing"],done:false},
+  {id:165,problem:"Design a Read Replica & Write-Ahead Log System",companies:["Amazon","Google","Meta","MySQL"],frequency:"Medium",category:"Databases & Distributed Systems",difficulty:"Hard",tags:["WAL","Replication","CDC","Binlog","Failover"],done:false},
+  {id:166,problem:"Design a Distributed Search Index",companies:["Google","Meta","Amazon","Elastic"],frequency:"High",category:"Databases & Distributed Systems",difficulty:"Hard",tags:["Inverted Index","Sharding","Replication","Near Real-time","Lucene"],done:false},
+  {id:167,problem:"Design a Vector Database (like Pinecone / Weaviate)",companies:["OpenAI","Google","Amazon","Microsoft","Meta"],frequency:"High",category:"Databases & Distributed Systems",difficulty:"Hard",tags:["ANN","HNSW","FAISS","Embeddings","Similarity Search"],done:false},
+  {id:168,problem:"Design a Change Data Capture (CDC) System",companies:["LinkedIn","Uber","Airbnb","Amazon","Confluent"],frequency:"Medium",category:"Databases & Distributed Systems",difficulty:"Hard",tags:["Debezium","Binlog","Kafka","Event Sourcing","Replication"],done:false},
+  {id:169,problem:"Design a Database Connection Pool",companies:["Amazon","Google","Meta","Stripe"],frequency:"Low",category:"Databases & Distributed Systems",difficulty:"Medium",tags:["Pool","Thread","Timeout","pgBouncer","Backpressure"],done:false},
+  {id:170,problem:"Design a Consistent Hashing Ring",companies:["Amazon","Meta","Google","Akamai"],frequency:"High",category:"Databases & Distributed Systems",difficulty:"Medium",tags:["Virtual Nodes","Ring","Partition","Load Balancing","Replication"],done:false},
+
+  // --- India-specific (10) ---
+  {id:171,problem:"Design Swiggy / Zomato Food Delivery",companies:["Swiggy","Zomato","Uber","Grab"],frequency:"Very High",category:"India-specific",difficulty:"Hard",tags:["ETA","Rider Assignment","Order Management","Real-time Location","Restaurant Onboarding"],done:false},
+  {id:172,problem:"Design Razorpay / PhonePe Payment Gateway",companies:["Razorpay","PhonePe","Paytm","Stripe"],frequency:"Very High",category:"India-specific",difficulty:"Hard",tags:["UPI","Idempotency","Bank Integration","Webhook","Reconciliation"],done:false},
+  {id:173,problem:"Design Ola Cabs Platform",companies:["Ola","Uber","Grab","Lyft"],frequency:"High",category:"India-specific",difficulty:"Hard",tags:["Ride Matching","Driver Tracking","Surge Pricing","ETA","Geospatial"],done:false},
+  {id:174,problem:"Design CRED's Credit Card Bill Payment & Rewards",companies:["CRED","Razorpay","PhonePe","Paytm"],frequency:"High",category:"India-specific",difficulty:"Hard",tags:["Bill Fetch","Rewards Engine","Loyalty","Payment","Gamification"],done:false},
+  {id:175,problem:"Design Meesho's Social Commerce Platform",companies:["Meesho","Flipkart","Amazon","Shopify"],frequency:"Medium",category:"India-specific",difficulty:"Hard",tags:["Reseller","Catalog","Logistics","Commission","WhatsApp Integration"],done:false},
+  {id:176,problem:"Design Flipkart's Big Billion Day Sale",companies:["Flipkart","Amazon","Meesho"],frequency:"Very High",category:"India-specific",difficulty:"Hard",tags:["Flash Sale","Inventory","Queue","Rate Limiting","CDN","Circuit Breaker"],done:false},
+  {id:177,problem:"Design a UPI Payment System",companies:["PhonePe","Google","Paytm","Razorpay","NPCI"],frequency:"High",category:"India-specific",difficulty:"Hard",tags:["UPI","VPA","IMPS","Bank Switch","Idempotency","Reconciliation"],done:false},
+  {id:178,problem:"Design Dream11 Fantasy Sports Contest System",companies:["Dream11","Amazon","ESPN"],frequency:"High",category:"India-specific",difficulty:"Hard",tags:["Contest","Leaderboard","Real-time Score","Payment","Team Validation"],done:false},
+  {id:179,problem:"Design Zepto's 10-minute Grocery Delivery",companies:["Zepto","Swiggy Instamart","Blinkit","Amazon"],frequency:"High",category:"India-specific",difficulty:"Hard",tags:["Dark Store","Inventory","Rider Dispatch","ETA","Hyperlocal"],done:false},
+  {id:180,problem:"Design Paytm's Mini App Store",companies:["Paytm","Google","Apple","WeChat"],frequency:"Medium",category:"India-specific",difficulty:"Hard",tags:["Mini App","Sandbox","Payments","SDK","Discovery"],done:false},
+
+  // Extra questions to reach 200 (distributed across categories)
+  {id:181,problem:"Design a Distributed Tracing System (like Jaeger)",companies:["Uber","Google","Netflix","Amazon"],frequency:"Medium",category:"Databases & Distributed Systems",difficulty:"Hard",tags:["Trace ID","Span","Sampling","OpenTelemetry","Observability"],done:false},
+  {id:182,problem:"Design a Log Aggregation System (like ELK Stack)",companies:["Amazon","Google","Elastic","Netflix","Uber"],frequency:"Medium",category:"Databases & Distributed Systems",difficulty:"Hard",tags:["Log Shipper","Elasticsearch","Kibana","Index","Retention"],done:false},
+  {id:183,problem:"Design an Ad Frequency Capping System",companies:["Google","Meta","Amazon","LinkedIn"],frequency:"Medium",category:"Ad Tech & Analytics",difficulty:"Medium",tags:["Counter","Redis","TTL","User","Distributed"],done:false},
+  {id:184,problem:"Design a Content Moderation System",companies:["Meta","Twitter/X","YouTube","TikTok","Reddit"],frequency:"High",category:"Social Media & Feeds",difficulty:"Hard",tags:["ML","Human Review","Queue","Policy","OCR","NLP"],done:false},
+  {id:185,problem:"Design a Live Auction System",companies:["eBay","Amazon","Google","Flipkart"],frequency:"Medium",category:"Gaming & Real-time Systems",difficulty:"Hard",tags:["WebSocket","Bidding","Idempotency","State Machine","Queue"],done:false},
+  {id:186,problem:"Design a Couriers & Logistics Tracking System",companies:["Amazon","FedEx","Flipkart","Delhivery"],frequency:"Medium",category:"Ride-sharing & Maps & Location",difficulty:"Medium",tags:["State Machine","GPS","Event","Timeline","Push Notification"],done:false},
+  {id:187,problem:"Design a Multi-region Active-Active Database",companies:["Amazon","Google","Meta","Microsoft","CockroachDB"],frequency:"Medium",category:"Databases & Distributed Systems",difficulty:"Hard",tags:["Multi-region","Active-Active","Conflict Resolution","CRDT","Latency"],done:false},
+  {id:188,problem:"Design a Real-time Analytics Dashboard",companies:["Datadog","Amazon","Google","Meta","Amplitude"],frequency:"Medium",category:"Ad Tech & Analytics",difficulty:"Hard",tags:["ClickHouse","Kafka","Real-time","Materialized View","Dashboard"],done:false},
+  {id:189,problem:"Design a Video Conferencing System (Zoom/Meet)",companies:["Google","Microsoft","Zoom","Meta"],frequency:"High",category:"Video & Streaming",difficulty:"Hard",tags:["WebRTC","SFU/MCU","TURN","Codec","Screen Share","Recording"],done:false},
+  {id:190,problem:"Design a Cloud Function / Serverless System (Lambda)",companies:["Amazon","Google","Microsoft","Cloudflare"],frequency:"Medium",category:"Caching & Rate Limiting & API",difficulty:"Hard",tags:["Cold Start","Isolation","Container","Billing","Auto-scale"],done:false},
+  {id:191,problem:"Design a CI/CD Pipeline System",companies:["GitHub","Atlassian","Amazon","Google","Microsoft"],frequency:"Medium",category:"Caching & Rate Limiting & API",difficulty:"Hard",tags:["Build","Test","Deploy","Pipeline","Container","Artifact"],done:false},
+  {id:192,problem:"Design a Pastebin / Code Snippet Sharing",companies:["Amazon","Google","GitHub","Microsoft"],frequency:"Medium",category:"Storage & File Systems",difficulty:"Easy",tags:["Object Storage","TTL","URL Shortener","Syntax Highlight","Cache"],done:false},
+  {id:193,problem:"Design an Online Judge / Code Execution System (LeetCode)",companies:["Google","Meta","Amazon","Microsoft"],frequency:"High",category:"Gaming & Real-time Systems",difficulty:"Hard",tags:["Sandbox","Container","Resource Limit","Judge","Queue","Test Cases"],done:false},
+  {id:194,problem:"Design a Ticketing System (like BookMyShow)",companies:["BookMyShow","Amazon","Ticketmaster","Grab"],frequency:"High",category:"E-commerce & Payments",difficulty:"Hard",tags:["Seat Selection","Distributed Lock","Inventory","Flash Sale","Payment"],done:false},
+  {id:195,problem:"Design a Hotel / Flight Booking System",companies:["Airbnb","Booking.com","Amazon","Google","MakeMyTrip"],frequency:"High",category:"E-commerce & Payments",difficulty:"Hard",tags:["Availability","Locking","Pricing","Search","Saga"],done:false},
+  {id:196,problem:"Design a Healthcare Appointment System",companies:["Amazon","Apple","Google","Practo"],frequency:"Medium",category:"E-commerce & Payments",difficulty:"Medium",tags:["Slot","Calendar","Notification","HIPAA","Reminder"],done:false},
+  {id:197,problem:"Design a Decentralized Identity / Blockchain Auth System",companies:["Microsoft","IBM","Amazon","Ethereum"],frequency:"Low",category:"Auth & Security",difficulty:"Hard",tags:["DID","Blockchain","Verifiable Credential","Public Key","ZKP"],done:false},
+  {id:198,problem:"Design an Online Examination / Proctoring System",companies:["Google","Amazon","Microsoft","Atlassian"],frequency:"Low",category:"Gaming & Real-time Systems",difficulty:"Hard",tags:["Video","Browser Lock","Randomization","Timer","Anti-cheat"],done:false},
+  {id:199,problem:"Design a Supply Chain Management System",companies:["Amazon","Flipkart","Walmart","Maersk"],frequency:"Low",category:"E-commerce & Payments",difficulty:"Hard",tags:["Inventory","Warehouse","ETA","IoT","Tracking","Saga"],done:false},
+  {id:200,problem:"Design a Multi-tenant SaaS Platform",companies:["Salesforce","Atlassian","Shopify","Amazon","Microsoft"],frequency:"High",category:"Databases & Distributed Systems",difficulty:"Hard",tags:["Tenant Isolation","Data Partitioning","Auth","Rate Limiting","Config"],done:false},
+];
+
+const CAT_CLASS = {
+  "Social Media & Feeds": "cat-social",
+  "Messaging & Chat": "cat-messaging",
+  "Video & Streaming": "cat-video",
+  "Storage & File Systems": "cat-storage",
+  "Search & Recommendations": "cat-search",
+  "E-commerce & Payments": "cat-ecommerce",
+  "Ride-sharing & Maps & Location": "cat-ride",
+  "Caching & Rate Limiting & API": "cat-caching",
+  "Notifications & Messaging Infra": "cat-notif",
+  "Gaming & Real-time Systems": "cat-gaming",
+  "Ad Tech & Analytics": "cat-adtech",
+  "Auth & Security": "cat-auth",
+  "Databases & Distributed Systems": "cat-db",
+  "India-specific": "cat-india",
+};
+
+const FREQ_ORDER = {"Very High":4,"High":3,"Medium":2,"Low":1};
+const DIFF_ORDER = {"Hard":3,"Medium":2,"Easy":1};
+const LS_KEY = 'hld_progress';
+const LS_THEME = 'hld_theme';
+
+let doneSet = new Set(JSON.parse(localStorage.getItem(LS_KEY)||'[]'));
+
+function saveProgress() {
+  localStorage.setItem(LS_KEY, JSON.stringify([...doneSet]));
+}
+
+function updateStats() {
+  const done = doneSet.size;
+  const total = QUESTIONS.length;
+  const pct = Math.round((done/total)*100);
+  document.getElementById('s-done').textContent = done;
+  document.getElementById('s-left').textContent = total - done;
+  document.getElementById('s-pct').textContent = pct + '%';
+  document.getElementById('progressBar').style.width = pct + '%';
+}
+
+function freqBadgeClass(f) {
+  return {
+    "Very High":"badge-vh",
+    "High":"badge-h",
+    "Medium":"badge-m",
+    "Low":"badge-l"
+  }[f]||"badge-l";
+}
+function diffBadgeClass(d) {
+  return {"Easy":"badge-easy","Medium":"badge-medium-d","Hard":"badge-hard"}[d]||"badge-easy";
+}
+
+function buildCard(q, delay) {
+  const done = doneSet.has(q.id);
+  const cos = q.companies.slice(0,5).map(c=>`<span class="co-pill">${c}</span>`).join('');
+  const more = q.companies.length > 5 ? `<span class="co-more">+${q.companies.length-5} more</span>` : '';
+  const tags = q.tags.map(t=>`<span class="tag-chip">${t}</span>`).join('');
+
+  const card = document.createElement('div');
+  card.className = 'card' + (done?' done':'');
+  card.setAttribute('tabindex','0');
+  card.dataset.id = q.id;
+  card.style.animationDelay = delay+'ms';
+  card.innerHTML = `
+    <div class="check-icon">✓</div>
+    <div class="card-title">${q.problem}</div>
+    <div class="meta-row">
+      <span class="badge ${CAT_CLASS[q.category]||'badge-cat'}">${q.category}</span>
+      <span class="badge ${diffBadgeClass(q.difficulty)}">${q.difficulty}</span>
+      <span class="badge ${freqBadgeClass(q.frequency)}">${q.frequency}</span>
+    </div>
+    <div class="companies-row">${cos}${more}</div>
+    <div class="tags-row">${tags}</div>
+    <button class="done-btn">${done?'✓ Completed':'Mark Done ✓'}</button>
+  `;
+
+  card.querySelector('.done-btn').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    toggleDone(q.id, card);
+  });
+
+  card.addEventListener('keydown', (e)=>{
+    if(e.key === 'd' || e.key === 'D') { toggleDone(q.id, card); }
+  });
+
+  return card;
+}
+
+function toggleDone(id, card) {
+  if(doneSet.has(id)) {
+    doneSet.delete(id);
+    card.classList.remove('done');
+    card.querySelector('.done-btn').textContent = 'Mark Done ✓';
+  } else {
+    doneSet.add(id);
+    card.classList.add('done');
+    card.querySelector('.done-btn').textContent = '✓ Completed';
+  }
+  saveProgress();
+  updateStats();
+}
+
+function getFiltered() {
+  const search = document.getElementById('searchBox').value.toLowerCase().trim();
+  const cat = document.getElementById('catFilter').value;
+  const diff = document.getElementById('diffFilter').value;
+  const freq = document.getElementById('freqFilter').value;
+  const comp = document.getElementById('compFilter').value;
+  const sort = document.getElementById('sortFilter').value;
+  const incompleteOnly = document.getElementById('incompleteOnly').checked;
+
+  let list = QUESTIONS.filter(q => {
+    if(cat && q.category !== cat) return false;
+    if(diff && q.difficulty !== diff) return false;
+    if(freq && q.frequency !== freq) return false;
+    if(comp && !q.companies.includes(comp)) return false;
+    if(incompleteOnly && doneSet.has(q.id)) return false;
+    if(search) {
+      const searchable = q.problem.toLowerCase() + ' ' + q.tags.join(' ').toLowerCase();
+      if(!searchable.includes(search)) return false;
+    }
+    return true;
+  });
+
+  list.sort((a,b)=>{
+    if(sort==='freq') return FREQ_ORDER[b.frequency]-FREQ_ORDER[a.frequency];
+    if(sort==='diff') return DIFF_ORDER[b.difficulty]-DIFF_ORDER[a.difficulty];
+    if(sort==='co') return b.companies.length-a.companies.length;
+    if(sort==='alpha') return a.problem.localeCompare(b.problem);
+    if(sort==='status') {
+      const ad = doneSet.has(a.id)?1:0, bd = doneSet.has(b.id)?1:0;
+      return ad-bd;
+    }
+    return 0;
+  });
+
+  return list;
+}
+
+function countActiveFilters() {
+  let c = 0;
+  if(document.getElementById('catFilter').value) c++;
+  if(document.getElementById('diffFilter').value) c++;
+  if(document.getElementById('freqFilter').value) c++;
+  if(document.getElementById('compFilter').value) c++;
+  if(document.getElementById('incompleteOnly').checked) c++;
+  if(document.getElementById('searchBox').value.trim()) c++;
+  return c;
+}
+
+function render() {
+  const grid = document.getElementById('grid');
+  const empty = document.getElementById('emptyState');
+  // Remove old cards but keep empty state
+  [...grid.querySelectorAll('.card')].forEach(c=>c.remove());
+
+  const list = getFiltered();
+  document.getElementById('shownCount').textContent = list.length;
+
+  const badge = document.getElementById('filterBadge');
+  const ac = countActiveFilters();
+  badge.textContent = ac;
+  badge.classList.toggle('visible', ac > 0);
+
+  if(list.length === 0) {
+    empty.classList.add('visible');
+  } else {
+    empty.classList.remove('visible');
+    list.forEach((q, i) => {
+      const delay = Math.min(i * 30, 600);
+      grid.appendChild(buildCard(q, delay));
+    });
+  }
+
+  updateStats();
+}
+
+// Theme
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('themeBtn').textContent = theme === 'dark' ? '🌙' : '☀️';
+}
+const savedTheme = localStorage.getItem(LS_THEME) || 'dark';
+applyTheme(savedTheme);
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  localStorage.setItem(LS_THEME, next);
+});
+
+// Filter events
+['searchBox','catFilter','diffFilter','freqFilter','compFilter','sortFilter'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', render);
+  document.getElementById(id).addEventListener('change', render);
+});
+document.getElementById('incompleteOnly').addEventListener('change', render);
+
+document.getElementById('clearFilters').addEventListener('click', () => {
+  document.getElementById('searchBox').value = '';
+  document.getElementById('catFilter').value = '';
+  document.getElementById('diffFilter').value = '';
+  document.getElementById('freqFilter').value = '';
+  document.getElementById('compFilter').value = '';
+  document.getElementById('sortFilter').value = 'freq';
+  document.getElementById('incompleteOnly').checked = false;
+  render();
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if(confirm('Reset all progress? This cannot be undone.')) {
+    doneSet.clear();
+    saveProgress();
+    render();
+  }
+});
+
+render();
+</script>
+</body>
+</html>
