@@ -7,6 +7,10 @@
 
 ---
 
+## 🔗 Solutions
+👉 **[Design Instagram / Photo Sharing Platform](https://sampritakoley.github.io/HLD_System-Design-Solution/PhotoSharingSysDesign/)**
+
+---
 
 ## 📚 Categories Covered
 
