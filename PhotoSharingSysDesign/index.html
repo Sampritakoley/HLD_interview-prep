@@ -713,89 +713,186 @@ CREATE INDEX idx_follows_followee ON follows(followee_id);</pre>
     </section>
 
     <!-- STEP 6 -->
+  <!-- STEP 6 -->
     <section class="step" id="step6">
       <span class="step-num">06 / Deep dives</span>
-      <h2>The three hardest problems</h2>
-      <p class="lead">This is where architecture gets tested against failure modes, not just happy paths.</p>
-
+      <h2>Deep dive on 3 critical components</h2>
+      <p class="lead">For each: the problem, the naive solution, why it fails, and the real solution used at scale.</p>
+ 
       <div class="dive">
         <div class="dive-head"><span class="tag">01</span> Feed generation at scale</div>
         <div class="dive-body">
-          <p>When you open Instagram, we show posts from everyone you follow — ranked, in under 200ms. Following 1,000 people makes this nontrivial.</p>
-
-          <div class="dive-label fail">Naive — fan-in at read time</div>
-          <pre>SELECT posts.* FROM posts
-JOIN follows ON posts.user_id = follows.followee_id
-WHERE follows.follower_id = 'current_user'
-ORDER BY created_at DESC LIMIT 20;</pre>
-          <p>JOIN across millions of rows = 500ms+ per query. At 700K reads/sec, this takes the database down.</p>
-
-          <div class="dive-label fix">Real solution — fan-out on write (push model)</div>
-          <p>On upload: fetch the uploader's follower list, push <code class="inline">post_id</code> into each follower's Redis list. On read: a single <code class="inline">LRANGE</code> call returns 20 IDs in under a millisecond.</p>
-
-          <div class="dive-label fail">The celebrity problem</div>
-          <p>A user with 400M followers needs 400M Redis writes per post. At 100K writes/sec, that's over an hour of lag.</p>
-
-          <div class="dive-label fix">Hybrid solution</div>
-          <p>Accounts above ~1M followers skip fan-out entirely. At read time, merge the pre-computed Redis feed with a fresh pull of recent posts from followed celebrities, then cache the merged result for ~5 minutes.</p>
+          <p><strong>The problem:</strong> When you open Instagram, we need to show you posts from everyone you follow, ranked by relevance, in under 200ms. You might follow 1,000 people. That means scanning 1,000 users' recent posts, ranking them, and returning the top 20.</p>
+ 
+          <div class="dive-label fail">Naive solution — Pull model (fan-in at read time)</div>
+          <pre>When user opens feed:
+  SELECT posts.* FROM posts
+  JOIN follows ON posts.user_id = follows.followee_id
+  WHERE follows.follower_id = 'current_user'
+  ORDER BY created_at DESC LIMIT 20;</pre>
+          <p><strong>Why it fails:</strong> JOIN across millions of rows = 500ms+ query. If you follow 1,000 people, that's 1,000 posts to rank. 700K reads/sec × 500ms means the database gets destroyed.</p>
+ 
+          <div class="dive-label fix">Real solution — Push model (fan-out on write)</div>
+          <pre>When user A uploads a photo:
+  1. Fetch A's follower list (say, 500 followers)
+  2. For each follower, append photo_id to their feed in Redis:
+     LPUSH feed:user_B photo_id_xyz
+     LTRIM feed:user_B 0 999   (keep only 1000 most recent)
+  3. This happens asynchronously via Kafka
+ 
+When user B opens their feed:
+  LRANGE feed:user_B 0 19   → returns 20 post IDs in &lt;1ms
+  Fetch post details by ID from Cassandra (parallel)
+  Fetch photos from CDN
+ 
+Read time: &lt;50ms total ✓</pre>
+ 
+          <div class="dive-label fail">But — the celebrity problem</div>
+          <p>Taylor Swift has 400M followers. When she posts, we'd need to update 400M Redis keys. At 100K writes/sec, that takes 4,000 seconds — over an hour. Totally unacceptable.</p>
+ 
+          <div class="dive-label fix">Hybrid solution (what Instagram actually uses)</div>
+          <pre>Define: "celebrity" = user with &gt; 1M followers
+ 
+For regular users (&lt; 1M followers):
+  → Use push model (fan-out on write to Redis)
+ 
+For celebrities (&gt; 1M followers):
+  → Skip the fan-out. Store their posts separately.
+  → At READ TIME, merge:
+     1. Read follower's pre-computed feed from Redis (regular accounts)
+     2. Fetch latest 20 posts from each celebrity they follow
+     3. Merge + rank the two lists
+     4. Cache this merged result for 5 minutes</pre>
+          <p>This means 99.9% of users get instant feed from Redis, and the extra celebrity merge adds only ~10ms.</p>
         </div>
       </div>
-
+ 
       <div class="dive">
         <div class="dive-head"><span class="tag">02</span> Photo upload pipeline</div>
         <div class="dive-body">
-          <p>A 5MB photo on a slow connection still needs to feel instant to the user, while being processed into multiple resolutions reliably.</p>
-          <div class="dive-label fail">Naive</div>
-          <p>Client uploads to our server → server processes → stores to S3 → returns success. Processing takes 2–3 seconds and overwhelms a single service tier at 7,000 uploads/sec.</p>
-          <div class="dive-label fix">Real solution</div>
-          <p>Pre-signed S3 URL lets the client upload <strong>directly</strong> to S3. Our service only handles metadata. Processing — resize, compress, moderate — happens asynchronously via Kafka. Result: "Posted!" in &lt;500ms.</p>
+          <p><strong>The problem:</strong> A user uploads a 5MB JPEG from a 3G connection. We need to store it durably, generate 3 resolutions, and make it available globally in seconds — without the user waiting.</p>
+ 
+          <div class="dive-label fail">Naive solution</div>
+          <pre>User → Upload Service → process image → store S3 → return success</pre>
+          <p><strong>Why it fails:</strong> Processing (resize, compress, filter) takes 2–3 seconds. The user waits on a slow mobile connection. If processing fails, the upload fails. 7,000 uploads/sec overwhelms a single service.</p>
+ 
+          <div class="dive-label fix">Real solution — async pipeline with direct S3 upload</div>
+          <pre>Step 1: Pre-signed URL (eliminate upload bottleneck)
+  Client requests: GET /upload/presign
+  Server returns: {presigned_url, post_id}
+  Client uploads DIRECTLY to S3 — bypasses our servers entirely!
+ 
+Step 2: Client notifies our service that upload is done
+  POST /photos {post_id, caption}
+  Service writes to DB with status = "processing"
+  Publishes to Kafka: {post_id, s3_key, user_id}
+ 
+Step 3: Photo Processing Workers (async)
+  - Download from S3
+  - Generate: thumbnail (150x150), medium (720px), original
+  - Run content moderation (NSFW detection via ML model)
+  - Store 3 versions back to S3
+  - Update DB status = "published"
+  - Invalidate/warm CDN
+ 
+Step 4: Kafka triggers Feed Fanout Worker (separate)</pre>
+          <p>Result: user sees "Posted!" in &lt;500ms. Photo appears in followers' feeds in ~5–10 sec.</p>
         </div>
       </div>
-
+ 
       <div class="dive">
-        <div class="dive-head"><span class="tag">03</span> Like counter accuracy vs. speed</div>
+        <div class="dive-head"><span class="tag">03</span> Like count accuracy vs. speed</div>
         <div class="dive-body">
-          <p>A viral post can take 800 likes/sec — all hitting one row.</p>
-          <div class="dive-label fail">Naive</div>
-          <pre>UPDATE posts SET like_count = like_count + 1 WHERE post_id = 'xyz';</pre>
-          <p>Creates a hot row with lock contention and race conditions at scale.</p>
-          <div class="dive-label fix">Real solution</div>
-          <p><code class="inline">INCR</code> in Redis for the count, <code class="inline">SADD</code> for dedup — both atomic, both instant. A background worker batch-writes the count to Cassandra every 30 seconds. Viral posts get the counter sharded across N Redis keys to avoid a hot key.</p>
+          <p><strong>The problem:</strong> A viral post gets 50,000 likes in 1 minute — that's 800 writes/sec to a single row. The heart must fill instantly when you like a post, but the global counter update must not block your experience.</p>
+ 
+          <div class="dive-label fail">Naive solution</div>
+          <pre>UPDATE posts SET like_count = like_count + 1 WHERE post_id = 'xyz';
+INSERT INTO likes (user_id, post_id) VALUES (...);</pre>
+          <p><strong>Why it fails:</strong> Row-level locking on a single row at 800 writes/sec creates a "hot row" — all writes queue up on one DB row. Counters can become wrong with race conditions.</p>
+ 
+          <div class="dive-label fix">Real solution — counter sharding + Redis</div>
+          <pre>Step 1: User likes a post
+  → Write to Redis immediately:
+     INCR like_count:post_xyz          (atomic, returns new count)
+     SADD liked_by:post_xyz user_123   (track who liked)
+  → Return success to user instantly (&lt;1ms)
+ 
+Step 2: Write-behind to DB (async, batched)
+  Every 30 seconds, a worker:
+  - Reads current count from Redis
+  - Batch-writes to Cassandra:
+    UPDATE post_metrics SET like_count = {redis_val} WHERE post_id = 'xyz'
+ 
+Step 3: Counter sharding for viral posts
+  Instead of 1 Redis key:
+    like_count:post_xyz:shard_0
+    like_count:post_xyz:shard_1
+    ...
+    like_count:post_xyz:shard_9
+ 
+  Random writes to one of 10 shards (eliminates hot key)
+  Read time: SUM all 10 shards (still fast)</pre>
+          <p>Result: like feel is instant, counter accuracy is ±5% (acceptable — "4.2M likes" not "4,193,847"), DB load is 99% reduced, and no duplicate likes since Redis SET enforces uniqueness.</p>
         </div>
       </div>
     </section>
-
+ 
     <!-- STEP 7 -->
     <section class="step" id="step7">
       <span class="step-num">07 / Tradeoffs & alternatives</span>
-      <h2>What we didn't choose, and what breaks next</h2>
-
+      <h2>What we did NOT choose and why</h2>
+ 
       <h3>Rejected alternatives</h3>
       <table>
         <tr><th>Alternative</th><th>Why rejected</th></tr>
-        <tr><td>MySQL for posts</td><td>Can't sustain 7K writes/sec without expensive sharding; doesn't need ACID here</td></tr>
-        <tr><td>Elasticsearch for feed</td><td>Not built for write-heavy workloads at this scale — reserved for search instead</td></tr>
-        <tr><td>Pure push model</td><td>Breaks for celebrities — hours of fan-out lag</td></tr>
-        <tr><td>On-the-fly resizing</td><td>Too expensive at 700K reads/sec — pre-generate at upload time</td></tr>
-        <tr><td>WebSockets everywhere</td><td>Stateful, harder to scale — reserved for real-time notifications only</td></tr>
+        <tr><td>MySQL instead of Cassandra for posts</td><td>MySQL is ACID, which we don't need for posts. Can't handle 7K writes/sec without expensive sharding setup. Cassandra's eventual consistency fits social media posts perfectly.</td></tr>
+        <tr><td>Elasticsearch for feed generation</td><td>Tempting because it supports ranking/scoring, but it's not designed for write-heavy workloads at this scale and has complex operational overhead. We use it only for search (hashtags, usernames), not feed.</td></tr>
+        <tr><td>Pure push model for everyone</td><td>Breaks for celebrities (400M fanout = hours of lag). Our hybrid approach handles 99% of users with push, and 1% celebrities with pull-at-read-time.</td></tr>
+        <tr><td>On-the-fly image resizing (served by server)</td><td>Services like Imgix do this — but at 700K reads/sec, even a 5ms resize operation = 3,500 CPU cores busy. Pre-generating 3 sizes at upload time is far cheaper operationally.</td></tr>
+        <tr><td>WebSockets for all API calls</td><td>WebSockets are stateful, making horizontal scaling harder. We use WebSockets only for real-time notifications (likes, follows). Regular feed/photo API uses REST + HTTP/2, which is stateless and simpler to scale.</td></tr>
       </table>
-
-      <h3>What breaks at 10x scale</h3>
-      <table>
-        <tr><th>Problem</th><th>Fix</th></tr>
-        <tr><td>Redis memory exhaustion</td><td>Only cache feeds for users active in the last 30 days; recompute on first login otherwise</td></tr>
-        <tr><td>Cassandra write hotspot</td><td>Redis write buffer + batched persistence + counter sharding</td></tr>
-        <tr><td>S3 egress costs</td><td>Aggressive CDN caching, targeting 99% cache hit rate</td></tr>
-        <tr><td>Kafka lag on viral fan-out</td><td>Auto-scaling consumer groups; de-prioritize celebrity fan-out vs. regular users</td></tr>
-      </table>
+ 
+      <h3>What breaks at 10× scale and how we fix it</h3>
+      <div class="dive" style="margin-top:16px">
+        <div class="dive-body">
+          <div class="dive-label fail">Problem — Redis memory exhaustion</div>
+          <p>At 10× DAU = 1B users × 1000 post IDs × 8 bytes = 8TB RAM. Too expensive.</p>
+          <div class="dive-label fix">Fix</div>
+          <p>Only keep feeds in Redis for active users (logged in within 30 days). Inactive users get feeds recomputed on first login. Also compress post IDs.</p>
+        </div>
+      </div>
+      <div class="dive">
+        <div class="dive-body">
+          <div class="dive-label fail">Problem — Cassandra write hotspot (viral posts)</div>
+          <p>A post with 100M likes all writing to one Cassandra partition.</p>
+          <div class="dive-label fix">Fix</div>
+          <p>Write to Redis counters only. Persist to Cassandra with write batching every 60 seconds. Counter sharding eliminates the Redis hot key too.</p>
+        </div>
+      </div>
+      <div class="dive">
+        <div class="dive-body">
+          <div class="dive-label fail">Problem — S3 egress costs at 10×</div>
+          <p>140 GB/sec × 10 = 1.4 TB/sec download = astronomical egress fees.</p>
+          <div class="dive-label fix">Fix</div>
+          <p>Aggressive CDN caching (<code class="inline">cache-control: max-age=31536000</code> for photos, since they never change). A 99% cache hit rate means only 14 GB/sec hits S3.</p>
+        </div>
+      </div>
+      <div class="dive">
+        <div class="dive-body">
+          <div class="dive-label fail">Problem — Kafka lag during viral events</div>
+          <p>A single celebrity post causes 50M fanout events flooding Kafka.</p>
+          <div class="dive-label fix">Fix</div>
+          <p>Auto-scaling consumer groups. Priority queues — regular users get fanout first, celebrity fanout de-prioritized (users accept a slight delay for celebrity posts).</p>
+        </div>
+      </div>
     </section>
-
+ 
     <!-- STEP 8 -->
     <section class="step" id="step8">
       <span class="step-num">08 / Summary</span>
       <h2>Cheat sheet</h2>
       <p class="lead">The ten things worth remembering before walking into the room.</p>
-
+ 
       <div class="cheat-grid">
         <div class="cheat-cell"><h4>Key numbers</h4><p>100M DAU · 7K write QPS · 700K read QPS · 40TB/day · Read:Write 100:1</p></div>
         <div class="cheat-cell"><h4>Key databases</h4><p>PostgreSQL (users/follows) · Cassandra (posts/likes) · Redis (feed/counters) · S3 (photo blobs)</p></div>
@@ -808,7 +905,6 @@ ORDER BY created_at DESC LIMIT 20;</pre>
         <div class="cheat-cell"><h4>Sharding keys</h4><p>Posts by user_id · Follows by follower_id · consistent hashing for rebalancing</p></div>
         <div class="cheat-cell"><h4>Consistency model</h4><p>Eventual for feed/likes, strong for follows — explicit tradeoff, not an accident</p></div>
       </div>
-
      
     </section>
 
