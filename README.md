@@ -11,6 +11,7 @@
 
 <sub>👉 <a href="https://sampritakoley.github.io/HLD_System-Design-Solution/PhotoSharingSysDesign/">Design Instagram / Photo Sharing Platform</a></sub><br>
 <sub>👉 <a href="https://sampritakoley.github.io/HLD_System-Design-Solution/TwitterNewsFeed/">Design Twitter/X News Feed Platform</a></sub>
+<sub>👉 <a href="https://sampritakoley.github.io/HLD_System-Design-Solution/FacebookNewsFeed/">Design Facebook News Feed</a></sub>
 ---
 
 ## 📚 Categories Covered
